@@ -1,0 +1,113 @@
+<section class="todo-page">
+  <header class="page-header">
+    <p class="eyebrow">CRUD con Signals</p>
+    <h1>ToDo de tareas</h1>
+    <p>
+      Este ejemplo guarda las tareas en <code>localStorage</code> y separa los cuatro
+      verbos: crear, leer, actualizar y eliminar.
+    </p>
+  </header>
+
+  <form class="create-form" (submit)="createTodo()">
+    <label for="new-task">Nueva tarea</label>
+    <div class="form-row">
+      <input
+        id="new-task"
+        type="text"
+        placeholder="Ej. Leer app.routes.ts"
+        [value]="newTitle()"
+        (input)="updateNewTitle($event)"
+      />
+      <button type="submit">Crear</button>
+    </div>
+  </form>
+
+  <section class="summary" aria-label="Resumen de tareas">
+    <div>
+      <strong>{{ todos().length }}</strong>
+      <span>Total</span>
+    </div>
+    <div>
+      <strong>{{ pendingCount() }}</strong>
+      <span>Pendientes</span>
+    </div>
+    <div>
+      <strong>{{ completedCount() }}</strong>
+      <span>Completadas</span>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="filters" aria-label="Filtros">
+      <button type="button" [class.active]="filter() === 'all'" (click)="setFilter('all')">
+        Todas
+      </button>
+      <button type="button" [class.active]="filter() === 'active'" (click)="setFilter('active')">
+        Pendientes
+      </button>
+      <button
+        type="button"
+        [class.active]="filter() === 'completed'"
+        (click)="setFilter('completed')"
+      >
+        Completadas
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="clear-button"
+      [disabled]="completedCount() === 0"
+      (click)="deleteCompleted()"
+    >
+      Eliminar completadas
+    </button>
+  </div>
+
+  @if (visibleTodos().length === 0) {
+    <p class="empty-state">No hay tareas para este filtro.</p>
+  } @else {
+    <ul class="todo-list" aria-label="Lista de tareas">
+      @for (todo of visibleTodos(); track todo.id) {
+        <li [class.completed]="todo.completed">
+          @if (editingId() === todo.id) {
+            <div class="edit-row">
+              <input
+                type="text"
+                aria-label="Editar tarea"
+                [value]="editTitle()"
+                (input)="updateEditTitle($event)"
+              />
+              <button type="button" class="save-button" (click)="saveEdit(todo.id)">
+                Guardar
+              </button>
+              <button type="button" class="ghost-button" (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </div>
+          } @else {
+            <div class="task-row">
+              <label>
+                <input
+                  type="checkbox"
+                  [checked]="todo.completed"
+                  (change)="toggleTodo(todo.id)"
+                />
+                <span>{{ todo.title }}</span>
+              </label>
+
+              <div class="task-actions">
+                <button type="button" class="ghost-button" (click)="startEdit(todo)">
+                  Editar
+                </button>
+                <button type="button" class="danger-button" (click)="deleteTodo(todo.id)">
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

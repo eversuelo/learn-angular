@@ -1,2 +1,24 @@
 
-<router-outlet />
+<div class="app-shell">
+  <header class="topbar">
+    <a routerLink="/" class="brand" aria-label="Ir al inicio">
+      {{ title() }}
+    </a>
+
+    <nav class="main-nav" aria-label="Menu principal">
+      @for (item of menuItems(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+        >
+          {{ item.label }}
+        </a>
+      }
+    </nav>
+  </header>
+
+  <main class="page-content">
+    <router-outlet />
+  </main>
+</div>
